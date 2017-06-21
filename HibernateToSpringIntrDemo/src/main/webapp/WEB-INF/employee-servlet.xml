@@ -16,8 +16,10 @@
         http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd
         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+        
     <context:annotation-config/> 
     <context:component-scan base-package="com.controllers" />
+    <context:component-scan base-package="com.services" />
     
     <bean id="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"></property>
@@ -25,39 +27,42 @@
         <property name="suffix" value=".jsp"></property>
     </bean>
     
-    <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+   <!--  <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <property name="basename" value="classpath:messages"></property>
         <property name="defaultEncoding" value="UTF-8"></property>
     </bean>
-    
-    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" p:location="/WEB-INF/jdbc.properties">
+     -->
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
+     p:location="/WEB-INF/jdbc.properties">
     </bean>
     
-    <bean id="dataSource"
-        class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close"
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close"
         p:driverClassName="${jdbc.driverClassName}"
-        p:url="${jdbc.databaseurl}" p:username="${jdbc.username}"
-        p:password="${jdbc.password}"></bean>
-    <bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-        <property name="dataSource" ref="dataSource"></property>
+        p:url="${jdbc.databaseurl}"
+        p:username="${jdbc.username}"
+        p:password="${jdbc.password}">
+    </bean>
+        
+        
+    <bean id="sessionFactoryRef" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean"> 
+        <property name="dataSource" ref="dataSource">
+        </property>
+        
         <property name="configLocation">
             <value>classpath:hibernate.cfg.xml</value>
         </property>
-        <property name="configurationClass">
-            <value>org.hibernate.cfg.AnnotationConfiguration</value>
-        </property>
-        <property name="hibernateProperties">
+        
+         <property name="hibernateProperties">
             <props>
                 <prop key="hibernate.dialect">${jdbc.dialect}</prop>
                 <prop key="hibernate.show_sql">true</prop>
             </props>
-        </property>
+        </property>        
     </bean>
-    <bean id="employeeDAO" class="com.services.EmployeeDaoImpl"></bean>
-    <bean id="employeeManager" class="com.services.EmployeeManagerImpl"></bean>
+ 
+   
     <tx:annotation-driven />
-    <bean id="transactionManager"
-        class="org.springframework.orm.hibernate3.HibernateTransactionManager">
-        <property name="sessionFactory" ref="sessionFactory"></property>
+    <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactoryRef"></property>
     </bean>
 </beans>

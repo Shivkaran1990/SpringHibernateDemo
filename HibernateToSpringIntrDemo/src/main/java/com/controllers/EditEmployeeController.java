@@ -19,50 +19,55 @@ import com.interfaces.EmployeeManager;
 
 @Controller
 public class EditEmployeeController {
+	
 	@Autowired
-    private EmployeeManager employeeManager;
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String listEmployees(ModelMap map)
-    {
-        map.addAttribute("employee", new EmployeeEntity());
-        map.addAttribute("employeeList", employeeManager.getAllEmployees());
-        return "editEmployeeList";
-    }
-    @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public String addEmployee(@ModelAttribute(value="employee") EmployeeEntity employee,BindingResult result,String customerInfo,ModelMap map) throws JsonParseException, JsonMappingException, IOException
-    {
-    	ObjectMapper mapper = new ObjectMapper();
-    	EmployeeEntity emp = mapper.readValue(customerInfo, EmployeeEntity.class);
-        employeeManager.addEmployee(emp);
-        map.addAttribute("employeeList", employeeManager.getAllEmployees());
-        return "redirect:/";
-    }
-    @RequestMapping("/delete/{employeeId}")
-    public String deleteEmplyee(@PathVariable("employeeId") String employeeId,ModelMap map)
-    {
-    	Integer empID=Integer.parseInt(employeeId);
-        employeeManager.deleteEmployee(empID);
-        map.addAttribute("employeeList", employeeManager.getAllEmployees());
-        return "redirect:/";
-    }
-    public void setEmployeeManager(EmployeeManager employeeManager) {
-        this.employeeManager = employeeManager;
-    }
-    @RequestMapping("/update/{employeeId}")
-    public String updateEmp(@ModelAttribute(value="employee") EmployeeEntity employee,BindingResult result,@PathVariable("employeeId") String employeeId,String customerInfo,ModelMap map)
-    {
-    	
-    	ObjectMapper mapper = new ObjectMapper();
-    	EmployeeEntity emp;
-		try {Integer empID=Integer.parseInt(employeeId);
-			  emp = mapper.readValue(customerInfo, EmployeeEntity.class);
-		       employeeManager.updateEmployee(empID, emp);
-		        map.addAttribute("employeeList", employeeManager.getAllEmployees());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
- 
-    	return "redirect:/";	
-    }
-    
+	private EmployeeManager employeeManager;
+	public void setEmployeeManager(EmployeeManager employeeManager) {
+		this.employeeManager = employeeManager;
+	}
+
+	@RequestMapping(value = "/", method = RequestMethod.GET)
+	public String listEmployees(ModelMap map) {
+		map.addAttribute("employee", new EmployeeEntity());
+		map.addAttribute("employeeList", employeeManager.getAllEmployees());
+		return "editEmployeeList";
+	}
+
+	@RequestMapping(value = "/add", method = RequestMethod.POST)
+	public String addEmployee(
+			@ModelAttribute(value = "employee") EmployeeEntity employee,
+			BindingResult result, String customerInfo, ModelMap map)
+			throws JsonParseException, JsonMappingException, IOException {
+		/*
+		 * ObjectMapper mapper = new ObjectMapper(); EmployeeEntity emp =
+		 * mapper.readValue(customerInfo, EmployeeEntity.class);
+		 */
+		employeeManager.addEmployee(employee);
+		return "redirect:/";
+	}
+
+	@RequestMapping("/delete/{employeeId}")
+	public String deleteEmplyee(@PathVariable("employeeId") String employeeId,
+			ModelMap map) {
+		Integer empID = Integer.parseInt(employeeId);
+		employeeManager.deleteEmployee(empID);
+		return "redirect:/";
+	}
+
+
+
+	@RequestMapping("/update/{employeeId}")
+	public String updateEmp(
+			@ModelAttribute(value = "employee") EmployeeEntity employee,
+			BindingResult result,
+			@PathVariable("employeeId") String employeeId, String customerInfo,
+			ModelMap map) {
+		
+		Integer empID = Integer.parseInt(employeeId);
+		employee.setId(empID);
+		employeeManager.updateEmployee(empID, employee);
+
+		return "redirect:/";
+	}
+
 }

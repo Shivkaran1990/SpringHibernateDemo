@@ -2,9 +2,11 @@ package com.services;
 
 import java.util.List;
 
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.hibernate.entity.EmployeeEntity;
 import com.interfaces.EmployeeDAO;
@@ -27,8 +29,19 @@ public class EmployeeDaoImpl implements EmployeeDAO{
             this.sessionFactory.getCurrentSession().delete(employee);
         }
     }
+    
 	public void updateEmployee(Integer employeeId, EmployeeEntity employeeEntity) {
+
 		this.sessionFactory.getCurrentSession().update(Integer.toString(employeeId), employeeEntity);
+		//this.sessionFactory.getCurrentSession().update(employeeEntity);
+		//this.sessionFactory.getCurrentSession().saveOrUpdate(Integer.toString(employeeId), employeeEntity);
+	/*	Session session=this.sessionFactory.openSession();
+		session.update(employeeEntity);
+		session.close();*/
+		//session.update(employeeEntity);
+		//session.close();
+		//this.sessionFactory.getCurrentSession().saveOrUpdate(Integer.toString(employeeId), employeeEntity);
+		//update(Integer.toString(employeeId), employeeEntity);
 	}
 
 }

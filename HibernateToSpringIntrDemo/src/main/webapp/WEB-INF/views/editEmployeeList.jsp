@@ -42,12 +42,12 @@
       </div>
 			 <div class="panel-footer">
 			 <button type="button" id ="createUser" class="btn btn-primary">Register User</button>
+			  <button type="button" id ="updateuser" operid="" class="btn btn-primary">Update User</button>
 			</div>
   </div>
 </div><br><br>
 
-<div>
-
+<div id="contactData">
 <c:if  test="${!empty employeeList}">
     <table class="table table-hover"  style="border-top: aliceblue;border-radius: 3px;box-shadow: 3px 3px 8px 0px rgba(50, 50, 50, 1);width: 1200;margin: auto;">
     <tr style="background: lightgray;">
@@ -61,12 +61,11 @@
             <td>${emp.lastname}, ${emp.firstname} </td>
             <td>${emp.email}</td>
             <td>${emp.telephone}</td>
-            <td><a operationid="${emp.id}" onclick="clicked(this)">delete</a>&nbsp;&nbsp&nbsp;<a empobj="${emp}" operationid="${emp.id}" onclick="editClick(this)" >Edit<a/></td>
+            <td><a operationid="${emp.id}" onclick="clicked(this)">delete</a>&nbsp;&nbsp&nbsp;<a empobj="" operationid="${emp.id}" onclick="editClick(this)">Edit<a/></td>
         </tr>
     </c:forEach>
     </table>
     </c:if>
-
 </div>
 
 	
@@ -74,12 +73,18 @@
 
 <script>
 
+function convertJavaToJs(obj){
+	console.log(event);
+	console.log("------------");
+	var jsEmpObj=new Object();
+	
+	return jsEmpObj;
+}
 
 function clicked(element) {     	
     var oprId=$(element).attr("operationid");
     console.log(oprId);
     var id = parseInt(oprId);
-    console.log(id);
     $.ajax({  
             type: 'POST',  
             dataType: 'json',  
@@ -90,15 +95,23 @@ function clicked(element) {
             error: function (XMLHttpRequest, textStatus, errorThrown) {  
    
             }  
-        });
-		     	
+        });   	
 		}
 		
-function editClick(element) {     	
+function editClick(element) {  
     var oprId=$(element).attr("operationid");
-    var fds=$(element).attr("empobj");
     
-
+    <c:forEach items="${employeeList}" var="emp">
+    var id="${emp.id}";
+      if(id==oprId)
+      {
+            document.getElementsByName("operid").value="${emp.id}";
+            document.getElementById("firstName").value="${emp.firstname}";
+		    document.getElementById("email").value="${emp.email}";
+		    document.getElementById("lastname").value="${emp.lastname}";
+		    document.getElementById("mnumber").value="${emp.telephone}";
+      }
+    </c:forEach>
     }
 	
 $(document).ready(function(){
@@ -113,12 +126,11 @@ $(document).ready(function(){
     	   obj.email  = email;
     	   obj.lastname = surname;
     	   obj.telephone =mobileNo;
-    	   var jsonString= JSON.stringify(obj);
     	$.ajax({  
             type: 'POST',  
             dataType: 'json',  
             url: '/HibernateToSpringIntrDemo/add',  
-            data: {customerInfo:jsonString,employee:obj},  
+            data:obj,
             success: function (Data) {  
             },  
             error: function (XMLHttpRequest, textStatus, errorThrown) {  
@@ -127,6 +139,39 @@ $(document).ready(function(){
         });
 
     });
+    
+    
+    $("#updateuser").click(function(){
+        var oprId=document.getElementsByName("operid").value;
+        console.log(oprId);
+    	var name=document.getElementById("firstName").value;
+    	var email=document.getElementById("email").value;
+    	var surname=document.getElementById("lastname").value;
+    	var mobileNo=document.getElementById("mnumber").value;
+    	var obj = new Object();
+    	   obj.firstname = name;
+    	   obj.email  = email;
+    	   obj.lastname = surname;
+    	   obj.telephone =mobileNo;
+    	   
+    	$.ajax({  
+            type: 'POST',  
+            dataType: 'json',  
+            url: '/HibernateToSpringIntrDemo/update/'+oprId,  
+            data:obj,
+            success: function (Data) {  
+            },  
+            error: function (XMLHttpRequest, textStatus, errorThrown) {  
+   
+            }  
+        });
+
+    });
+    
+    
+    
+    
+    
 });
 
 </script>

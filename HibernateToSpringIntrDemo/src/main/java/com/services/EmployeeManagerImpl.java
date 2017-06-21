@@ -29,6 +29,7 @@ public class EmployeeManagerImpl implements EmployeeManager
     public void setEmployeeDAO(EmployeeDAO employeeDAO) {
         this.employeeDAO = employeeDAO;
     }
+    @Transactional
 	public void updateEmployee(Integer employeeId, EmployeeEntity employeeEntity) {
 		employeeDAO.updateEmployee(employeeId, employeeEntity);
 		
